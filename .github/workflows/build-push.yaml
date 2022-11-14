@@ -33,7 +33,7 @@ jobs:
       - uses: docker/build-push-action@v3
         name: Build
         with:
-          platforms: "linux/amd64","linux/arm64"
+          platforms: linux/amd64,linux/arm64
           push: false
           load: true
           cache-from: type=local,src=${{ github.workspace }}/cache
@@ -52,7 +52,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          platforms: "linux/amd64","linux/arm64"
+          platforms: linux/amd64,linux/arm64
           cache-from: type=local,src=${{ github.workspace }}/cache
           cache-to: type=local,dest=${{ github.workspace }}/cache
           tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.ubuntu }}-${{ matrix.ruby }}"
