@@ -1,5 +1,6 @@
 ARG UBUNTU_VERSION="focal"
 FROM ubuntu:${UBUNTU_VERSION}
+
 LABEL maintainer="Moritz Heiber <hello@heiber.im>"
 LABEL org.opencontainers.image.source=https://github.com/moritzheiber/ruby-jemalloc-docker
 

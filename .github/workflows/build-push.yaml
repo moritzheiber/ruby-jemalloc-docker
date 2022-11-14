@@ -9,7 +9,6 @@ jobs:
       matrix:
         ruby: ["3.0.4"]
         ubuntu: ["focal"]
-        arch: ["linux/amd64", "linux/arm64"]
         include:
           - ruby: "3.0.4"
             ruby_checksum: "70b47c207af04bce9acea262308fb42893d3e244f39a4abc586920a1c723722b"
@@ -23,7 +22,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Restore Docker cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with: 
           path: ${{ github.workspace }}/cache
           key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
@@ -34,7 +33,7 @@ jobs:
       - uses: docker/build-push-action@v3
         name: Build
         with:
-          platforms: ${{ matrix.arch }}
+          platforms: "linux/amd64","linux/arm64"
           push: false
           load: true
           cache-from: type=local,src=${{ github.workspace }}/cache
@@ -53,7 +52,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          platforms: ${{ matrix.arch }}
+          platforms: "linux/amd64","linux/arm64"
           cache-from: type=local,src=${{ github.workspace }}/cache
           cache-to: type=local,dest=${{ github.workspace }}/cache
           tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.ubuntu }}-${{ matrix.ruby }}"
