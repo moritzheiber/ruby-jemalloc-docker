@@ -1,6 +1,13 @@
 name: Build-Test-Push
 on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE.md'
   push:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE.md'
 
 jobs:
   build-test-push:
