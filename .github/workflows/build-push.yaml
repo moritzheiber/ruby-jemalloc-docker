@@ -22,6 +22,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Restore Docker cache
+        uses: actions/cache@v1
+        with: 
+          path: ${{ github.workspace }}/cache
+          key: ${{ runner.os }}-docker-${{ hashfiles('cache/**') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
       - uses: docker/build-push-action@v3
@@ -30,12 +37,14 @@ jobs:
           platforms: ${{ matrix.arch }}
           push: false
           load: true
+          cache-from: type=local,src=${{ github.workspace }}/cache
+          cache-to: type=local,dest=${{ github.workspace }}/cache
           build-args: |
             RUBY_VERSION:${{ matrix.ruby }}
             RUBY_CHECKSUM:${{ matrix.ruby_checksum }}
             UBUNTU_VERSION:${{ matrix.ubuntu }}
           tags: "ruby-jemalloc"
-      - uses: e1himself/goss-installation-action@v1.0.4
+      - uses: e1himself/goss-installation-action@v1.1.0
         name: Install goss/dgoss
       - name: Test
         run: dgoss run -ti -e RUBY_VERSION=${{ matrix.ruby }} ruby-jemalloc
@@ -45,4 +54,6 @@ jobs:
         with:
           push: true
           platforms: ${{ matrix.arch }}
-          tags: "ghcr.io/moritzheiber/ruby-jemalloc-${{ matrix.ubuntu }}-${{ matrix.ruby }}"
+          cache-from: type=local,src=${{ github.workspace }}/cache
+          cache-to: type=local,dest=${{ github.workspace }}/cache
+          tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.ubuntu }}-${{ matrix.ruby }}"
