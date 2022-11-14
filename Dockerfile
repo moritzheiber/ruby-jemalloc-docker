@@ -38,6 +38,6 @@ RUN apt-get update && \
 	make -j"$(nproc)" > /dev/null && \
 	make install && \
 	rm -rf /tmp/build && \
-	apt-get clean && \
-	rm -rf /var/cache && \
-	rm -rf /var/lib/apt/lists/*
+	apt-get clean
+
+WORKDIR /
