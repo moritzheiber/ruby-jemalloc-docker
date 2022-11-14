@@ -30,10 +30,10 @@ jobs:
           platforms: ${{ matrix.arch }}
           push: false
           load: true
-          build-args:
-            RUBY_VERSION: ${{ matrix.ruby }}
-            RUBY_CHECKSUM: ${{ matrix.ruby_checksum }}
-            UBUNTU_VERSION: ${{ matrix.ubuntu }}
+          build-args: |
+            RUBY_VERSION:${{ matrix.ruby }}
+            RUBY_CHECKSUM:${{ matrix.ruby_checksum }}
+            UBUNTU_VERSION:${{ matrix.ubuntu }}
           tags: "ruby-jemalloc"
       - uses: e1himself/goss-installation-action@v1.0.4
         name: Install goss/dgoss
