@@ -1,0 +1,17 @@
+file:
+  /opt/ruby/bin/ruby:
+    exists: true
+    mode: "0755"
+    owner: root
+    group: root
+    filetype: file
+  /etc/os-release:
+    exists: true
+    contains:
+      - "Ubuntu"
+command:
+  /opt/ruby/bin/ruby:
+    exit-status: 0
+    exec: "/opt/ruby/bin/ruby -v"
+    stdout:
+    - "ruby {{.Env.RUBY_VERSION}}"
