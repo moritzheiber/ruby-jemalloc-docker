@@ -2,9 +2,11 @@
 
 A Docker image for Ruby, built with [`jemalloc`](https://scalingo.com/blog/improve-ruby-application-memory-jemalloc).
 
-Currently, the following distributions are supported:
+The image is based on [the offical Ruby "slim" image](https://hub.docker.com/_/ruby) on Docker Hub.
 
-- Ubuntu "Focal Fossa" (20.04)
+The following images are used:
+
+- `slim`
 
 The following platforms are built:
 

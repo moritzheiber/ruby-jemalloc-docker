@@ -1,10 +1,11 @@
-ARG UBUNTU_VERSION="focal"
-FROM ubuntu:${UBUNTU_VERSION}
+ARG RUBY_VERSION="3.0.4"
+ARG IMAGE_VERSION="slim"
+FROM ruby:${RUBY_VERSION}-${IMAGE_VERSION}
 
 LABEL maintainer="Moritz Heiber <hello@heiber.im>"
 LABEL org.opencontainers.image.source=https://github.com/moritzheiber/ruby-jemalloc-docker
 
-ARG RUBY_VERSION="3.0.4"
+ARG RUBY_VERSION
 ARG RUBY_CHECKSUM="70b47c207af04bce9acea262308fb42893d3e244f39a4abc586920a1c723722b"
 
 ENV DEBIAN_FRONTEND="noninteractive"
@@ -36,4 +37,7 @@ RUN apt-get update && \
 	  --disable-install-doc && \
 	make -j"$(nproc)" > /dev/null && \
 	make install && \
-	rm -rf /tmp/build
+	rm -rf /tmp/build && \
+	apt-get clean && \
+	rm -rf /var/cache && \
+	rm -rf /var/lib/apt/lists/*
