@@ -17,6 +17,7 @@ The following platforms are built:
 The following Ruby versions are built:
 
 - `3.0.4`
+- `3.1.2`
 
 ## Tests
 
