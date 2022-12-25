@@ -16,6 +16,12 @@ The following platforms are built:
 
 The following Ruby versions are built:
 
+- `3.0.5`
+- `3.1.3`
+- `3.2.0`
+
+Container images are available but no longer maintained for the following versions:
+
 - `3.0.4`
 - `3.1.2`
 
@@ -30,7 +36,7 @@ dgoss run -ti ruby-jemalloc
 You can specify the Ruby version to test for by passing `RUBY_VERSION` as a variable:
 
 ```console
-dgoss run -ti -e RUBY_VERSION=3.0.4 ruby-jemalloc
+dgoss run -ti -e RUBY_VERSION=3.0.5 ruby-jemalloc
 ```
 
-_Note: `3.0.4` is the default._
+_Note: `3.0.5` is the default._
