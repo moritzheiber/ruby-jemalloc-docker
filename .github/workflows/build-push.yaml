@@ -24,10 +24,6 @@ jobs:
           - ruby: "3.2.0"
             ruby_checksum: "daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272"
             flags: "--enable-yjit"
-        # There are no official images for the final 3.2.0 release yet
-        exclude:
-          - image: "slim"
-            ruby: "3.2.0"
 
     steps:
       - name: Set image_name

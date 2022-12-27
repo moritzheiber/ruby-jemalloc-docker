@@ -6,7 +6,7 @@ The images are based on [the offical Ruby "slim"](https://hub.docker.com/_/ruby)
 
 The following images are used:
 
-- `slim`
+- `ruby:${RUBY_VERSION}-slim`
 - `ubuntu:20.04`
 - `ubuntu:22.04`
 
@@ -20,9 +20,9 @@ The following Ruby versions are built:
 
 - `3.0.5`
 - `3.1.3`
-- `3.2.0` (only on Ubuntu 20.04/22.04 for now; no official `slim` image for `3.2.0` yet)
+- `3.2.0`
 
-Ubuntu containers with Ruby 3.2.0 are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
+Images for Ruby 3.2.0 are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
 
 Container images are available but no longer maintained for the following versions:
 
