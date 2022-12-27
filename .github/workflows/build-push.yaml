@@ -23,6 +23,11 @@ jobs:
             ruby_checksum: "5ea498a35f4cd15875200a52dde42b6eb179e1264e17d78732c3a57cd1c6ab9e"
           - ruby: "3.2.0"
             ruby_checksum: "daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272"
+            flags: "--enable-yjit"
+        # There are no official images for the final 3.2.0 release yet
+        exclude:
+          - image: "slim"
+            ruby: "3.2.0"
 
     steps:
       - name: Set image_name
@@ -62,4 +67,5 @@ jobs:
             RUBY_VERSION=${{ matrix.ruby }}
             RUBY_CHECKSUM=${{ matrix.ruby_checksum }}
             IMAGE_NAME=${{ steps.context.outputs.image_name }}
+            ADDITIONAL_FLAGS=${{ matrix.flags }}
           tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.ruby }}-${{ matrix.image }}"

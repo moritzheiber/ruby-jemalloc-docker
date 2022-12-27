@@ -2,11 +2,13 @@
 
 A Docker image for Ruby, built with [`jemalloc`](https://scalingo.com/blog/improve-ruby-application-memory-jemalloc).
 
-The image is based on [the offical Ruby "slim" image](https://hub.docker.com/_/ruby) on Docker Hub.
+The images are based on [the offical Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "20.04"/"22.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
 
 The following images are used:
 
 - `slim`
+- `ubuntu:20.04`
+- `ubuntu:22.04`
 
 The following platforms are built:
 
@@ -18,7 +20,9 @@ The following Ruby versions are built:
 
 - `3.0.5`
 - `3.1.3`
-- `3.2.0`
+- `3.2.0` (only on Ubuntu 20.04/22.04 for now; no official `slim` image for `3.2.0` yet)
+
+Ubuntu containers with Ruby 3.2.0 are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
 
 Container images are available but no longer maintained for the following versions:
 
@@ -39,4 +43,4 @@ You can specify the Ruby version to test for by passing `RUBY_VERSION` as a vari
 dgoss run -ti -e RUBY_VERSION=3.0.5 ruby-jemalloc
 ```
 
-_Note: `3.0.5` is the default._
+_Note: `3.0.5` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
