@@ -59,7 +59,7 @@ jobs:
           cache-from: type=local,src=${{ github.workspace }}/cache
           cache-to: type=local,dest=${{ github.workspace }}/cache
           build-args: |
-            RUBY_VERSION:${{ matrix.ruby }}
-            RUBY_CHECKSUM:${{ matrix.ruby_checksum }}
-            IMAGE_NAME:${{ steps.context.outputs.image_name }}
+            RUBY_VERSION=${{ matrix.ruby }}
+            RUBY_CHECKSUM=${{ matrix.ruby_checksum }}
+            IMAGE_NAME=${{ steps.context.outputs.image_name }}
           tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.ruby }}-${{ matrix.image }}"
