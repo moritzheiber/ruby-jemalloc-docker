@@ -8,7 +8,7 @@ file:
   /etc/os-release:
     exists: true
     contains:
-      - "Debian"
+      - "/Debian|Ubuntu/"
 command:
   /opt/ruby/bin/ruby:
     exit-status: 0
