@@ -16,7 +16,7 @@ jobs:
       versions: ${{ steps.ruby-versions.outputs.versions }}
       checksums: ${{ steps.ruby-versions.outputs.checksums }}
     steps:
-      - uses: moritzheiber/ruby-versions@v1
+      - uses: moritzheiber/ruby-versions-action@v1
         name: Fetch latest Ruby versions
         id: ruby-versions
   build-test-push:
