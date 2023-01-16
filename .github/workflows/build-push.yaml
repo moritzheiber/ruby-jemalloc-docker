@@ -23,8 +23,6 @@ jobs:
             ruby_checksum: "5ea498a35f4cd15875200a52dde42b6eb179e1264e17d78732c3a57cd1c6ab9e"
           - ruby: "3.2.0"
             ruby_checksum: "daaa78e1360b2783f98deeceb677ad900f3a36c0ffa6e2b6b19090be77abc272"
-            flags: "--enable-yjit"
-
     steps:
       - name: Set image_name
         id: context
@@ -35,6 +33,12 @@ jobs:
             echo "image_name=ubuntu:20.04" >> ${GITHUB_OUTPUT}
           elif [[ "${{ matrix.image }}" == "ubuntu-22.04" ]] ; then
             echo "image_name=ubuntu:22.04" >> ${GITHUB_OUTPUT}
+          fi
+
+          if [[ "${{ startsWith(matrix.ruby, '3.2') }}" == "true" ]] ; then
+            echo "flags=--enable-yjit" >> ${GITHUB_OUTPUT}
+          else
+            echo "flags=''" >> ${GITHUB_OUTPUT}
           fi
       - uses: actions/checkout@v3
       - name: Login to GHCR
@@ -63,5 +67,5 @@ jobs:
             RUBY_VERSION=${{ matrix.ruby }}
             RUBY_CHECKSUM=${{ matrix.ruby_checksum }}
             IMAGE_NAME=${{ steps.context.outputs.image_name }}
-            ADDITIONAL_FLAGS=${{ matrix.flags }}
+            ADDITIONAL_FLAGS=${{ steps.context.outputs.flags }}
           tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.ruby }}-${{ matrix.image }}"

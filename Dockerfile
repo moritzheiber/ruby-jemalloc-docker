@@ -22,12 +22,12 @@ RUN apt-get update && \
 	python3 \
 	apt-utils \
 	build-essential \
- 	bison \
+	bison \
 	libyaml-dev \
 	libgdbm-dev \
 	libreadline-dev \
 	libjemalloc-dev \
-  	libncurses5-dev \
+	libncurses5-dev \
 	libffi-dev \
 	zlib1g-dev \
 	libssl-dev && \
@@ -38,10 +38,10 @@ RUN apt-get update && \
 	tar xf "ruby-${RUBY_VERSION}.tar.gz" && \
 	cd "ruby-${RUBY_VERSION}" && \
 	./configure --prefix=/opt/ruby \
-	  --with-jemalloc \
-	  --with-shared \
-	  --disable-install-doc \
-	  "${ADDITIONAL_FLAGS}" && \
+	--with-jemalloc \
+	--with-shared \
+	--disable-install-doc \
+	"${ADDITIONAL_FLAGS}" && \
 	make -j"$(nproc)" > /dev/null && \
 	make install && \
 	rustup self uninstall -y && \
