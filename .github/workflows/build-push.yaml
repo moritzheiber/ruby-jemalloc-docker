@@ -37,8 +37,6 @@ jobs:
 
           if [[ "${{ startsWith(matrix.ruby, '3.2') }}" == "true" ]] ; then
             echo "flags=--enable-yjit" >> ${GITHUB_OUTPUT}
-          else
-            echo "flags=''" >> ${GITHUB_OUTPUT}
           fi
       - uses: actions/checkout@v3
       - name: Login to GHCR
