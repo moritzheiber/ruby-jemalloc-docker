@@ -54,7 +54,7 @@ jobs:
         with:
           driver-opts: |
             image=moby/buildkit:v0.10.6
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v4
         name: Build
         with:
           platforms: linux/amd64,linux/arm64
