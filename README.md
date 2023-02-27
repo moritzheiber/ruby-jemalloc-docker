@@ -30,6 +30,32 @@ Container images are available but no longer maintained for the following versio
 - `3.1.2`
 - `3.2.0`
 
+## Support for newer Ruby versions
+
+GitHub Actions is set up to gather the latest available Ruby versions with the [ruby-versions-action](https://github.com/moritzheiber/ruby-versions-action) and feed it to the build process. The plan is to run the build pipeline and update the REAMDE from a template regularly (e.g. weekly) in the future. For now this has to be done manually, so feel free to open a new issue once a new release needs to be supported (it usually takes a few minutes to trigger the pipeline and update the README).
+
+## Compiling your own image
+
+The `Dockerfile` is set up in a way which makes it possible to compile pretty much any recent Ruby release [from the index on the ruby-lang.org website](https://cache.ruby-lang.org/pub/ruby/index.txt). The only two build arguments you need to provide are `RUBY_VERSION` (e.g. `3.1.2`) and the associated `sha256` checksum as `RUBY_CHECKSUM` (e.g. `ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a`). If you wish to pass additional compile-time options you can use the build argument `ADDITIONAL_FLAGS` (e.g. to enable YJIT support for Ruby `3.2.x`):
+
+```console
+$ docker build \
+  --build-arg RUBY_VERSION="3.1.2" \
+  --build-arg RUBY_CHECKSUM="ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a" \
+  --build-arg ADDITIONAL_FLAGS="--enable-yjit" \
+  -t ruby-jemalloc:3.1.2-slim .
+```
+The `Dockerfile` uses [the official Ruby `slim` image](https://hub.docker.com/_/ruby) by default, but you can also use your own base image by passing the build argument `IMAGE_NAME`:
+
+```console
+$ docker build \
+  --build-arg RUBY_VERSION=3.1.2 \
+  --build-arg RUBY_CHECKSUM=ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a \
+  --build-arg IMAGE_NAME=ubuntu:22.04 \
+  -t ruby-jemalloc:3.1.2-ubuntu-22.04 .
+```
+_Note: Ruby `3.0.5-slim` is the default when building the Docker image without any build arguments._
+
 ## Tests
 
 The tests are run using [`goss`](https://github.com/aelsabbahy/goss):
