@@ -27,8 +27,11 @@ Images for Ruby 3.2.x are compiled with [YJIT](https://github.com/ruby/ruby/blob
 Container images are available but no longer maintained for the following versions:
 
 - `3.0.4`
+- `3.0.5`
 - `3.1.2`
+- `3.1.3`
 - `3.2.0`
+- `3.2.1`
 
 ## Support for newer Ruby versions
 
@@ -54,7 +57,7 @@ $ docker build \
   --build-arg IMAGE_NAME=ubuntu:22.04 \
   -t ruby-jemalloc:3.1.2-ubuntu-22.04 .
 ```
-_Note: Ruby `3.0.5-slim` is the default when building the Docker image without any build arguments._
+_Note: Ruby `3.2.2-slim` is the default when building the Docker image without any build arguments._
 
 ## Tests
 
@@ -67,7 +70,7 @@ dgoss run -ti ruby-jemalloc
 You can specify the Ruby version to test for by passing `RUBY_VERSION` as a variable:
 
 ```console
-dgoss run -ti -e RUBY_VERSION=3.0.5 ruby-jemalloc
+dgoss run -ti -e RUBY_VERSION=3.2.2 ruby-jemalloc
 ```
 
-_Note: `3.0.5` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
+_Note: `3.2.2` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
