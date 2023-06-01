@@ -39,7 +39,7 @@ RUN apt-get update && \
 	cd "ruby-${RUBY_VERSION}" && \
 	./configure --prefix=/opt/ruby \
 	--with-jemalloc \
-	--with-shared \
+	--enable-shared \
 	--disable-install-doc \
 	"${ADDITIONAL_FLAGS}" && \
 	make -j"$(nproc)" > /dev/null && \
