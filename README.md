@@ -39,7 +39,7 @@ GitHub Actions is set up to gather the latest available Ruby versions with the [
 
 ## Compiling your own image
 
-The `Dockerfile` is set up in a way which makes it possible to compile pretty much any recent Ruby release [from the index on the ruby-lang.org website](https://cache.ruby-lang.org/pub/ruby/index.txt). The only two build arguments you need to provide are `RUBY_VERSION` (e.g. `3.1.2`) and the associated `sha256` checksum as `RUBY_CHECKSUM` (e.g. `ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a`). If you wish to pass additional compile-time options you can use the build argument `ADDITIONAL_FLAGS` (e.g. to enable YJIT support for Ruby `3.2.x`):
+The `Dockerfile` is set up in a way which makes it possible to compile pretty much any recent Ruby release [from the index on the ruby-lang.org website](https://cache.ruby-lang.org/pub/ruby/index.txt). The only two build arguments you need to provide are `RUBY_VERSION` (e.g. `3.1.2`) and the associated `sha256` checksum as `RUBY_CHECKSUM` (e.g. `ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a`) of the `tar.gz` package associated with the relevant version. If you wish to pass additional compile-time options you can use the build argument `ADDITIONAL_FLAGS` (e.g. to enable YJIT support for Ruby `3.2.x`):
 
 ```console
 $ docker build \
