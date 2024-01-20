@@ -1,4 +1,4 @@
-ARG RUBY_VERSION="3.2.2"
+ARG RUBY_VERSION="3.3.0"
 ARG IMAGE_NAME="ruby:${RUBY_VERSION}-slim"
 # hadolint ignore=DL3006
 FROM ${IMAGE_NAME}
@@ -7,8 +7,10 @@ LABEL maintainer="Moritz Heiber <hello@heiber.im>"
 LABEL org.opencontainers.image.source=https://github.com/moritzheiber/ruby-jemalloc-docker
 
 ARG RUBY_VERSION
-ARG RUBY_CHECKSUM="96c57558871a6748de5bc9f274e93f4b5aad06cd8f37befa0e8d94e7b8a423bc"
 ARG ADDITIONAL_FLAGS
+
+ARG RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.xz
+ARG RUBY_CHECKSUM 676b65a36e637e90f982b57b059189b3276b9045034dcd186a7e9078847b975b
 
 ENV DEBIAN_FRONTEND="noninteractive" \
 	RUBY_VERSION="${RUBY_VERSION}"
@@ -33,9 +35,9 @@ RUN apt-get update && \
 	libssl-dev && \
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable && \
 	source "${HOME}/.cargo/env" && \
-	curl -L -o "ruby-${RUBY_VERSION}.tar.gz" "https://cache.ruby-lang.org/pub/ruby/${RUBY_VERSION%.*}/ruby-${RUBY_VERSION}.tar.gz" && \
-	echo "${RUBY_CHECKSUM}  ruby-${RUBY_VERSION}.tar.gz" | sha256sum --strict -c - && \
-	tar xf "ruby-${RUBY_VERSION}.tar.gz" && \
+	curl -L -o ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
+	echo "$RUBY_CHECKSUM *ruby.tar.xz" | sha256sum --check --strict; \
+	tar xf "ruby.tar.xz" && \
 	cd "ruby-${RUBY_VERSION}" && \
 	./configure --prefix=/opt/ruby \
 	--with-jemalloc \
