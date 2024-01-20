@@ -18,20 +18,23 @@ The following platforms are built:
 
 The following Ruby versions are built:
 
-- `3.0.6`
 - `3.1.4`
-- `3.2.2`
+- `3.2.3`
+- `3.3.0`
 
-Images for Ruby 3.2.x are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
+Images for Ruby >= 3.2.x are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
 
 Container images are available but no longer maintained for the following versions:
 
 - `3.0.4`
 - `3.0.5`
+- `3.0.6`
 - `3.1.2`
 - `3.1.3`
 - `3.2.0`
 - `3.2.1`
+- `3.2.2`
+
 
 ## Support for newer Ruby versions
 
