@@ -13,7 +13,7 @@ on:
 
 jobs:
   gather-versions:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       versions: ${{ steps.ruby-versions.outputs.versions }}
       metadata: ${{ steps.ruby-versions.outputs.metadata }}
@@ -22,12 +22,12 @@ jobs:
         name: Fetch latest Ruby versions
         id: ruby-versions
   build-test-push:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: ["gather-versions"]
     strategy:
       matrix:
         version: ${{ fromJSON(needs.gather-versions.outputs.versions) }}
-        image: ["slim", "ubuntu-20.04", "ubuntu-22.04"]
+        image: ["slim", "ubuntu-22.04", "ubuntu-24.04"]
         include: ${{ fromJSON(needs.gather-versions.outputs.metadata) }}
     steps:
       - name: Set image_name
@@ -35,9 +35,9 @@ jobs:
         run: |
           if [[ "${{ matrix.image }}" == "slim" ]] ; then
             echo "image_name=ruby:${{ matrix.version }}-slim" >> ${GITHUB_OUTPUT}
-          elif [[ "${{ matrix.image }}" == "ubuntu-20.04" ]] ; then
-            echo "image_name=ubuntu:20.04" >> ${GITHUB_OUTPUT}
           elif [[ "${{ matrix.image }}" == "ubuntu-22.04" ]] ; then
+            echo "image_name=ubuntu:20.04" >> ${GITHUB_OUTPUT}
+          elif [[ "${{ matrix.image }}" == "ubuntu-24.04" ]] ; then
             echo "image_name=ubuntu:22.04" >> ${GITHUB_OUTPUT}
           fi
 

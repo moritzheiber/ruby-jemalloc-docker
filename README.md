@@ -2,13 +2,13 @@
 
 A Docker image for Ruby, built with [`jemalloc`](https://scalingo.com/blog/improve-ruby-application-memory-jemalloc).
 
-The images are based on [the offical Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "20.04"/"22.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
+The images are based on [the offical Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "22.04"/"24.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
 
 The following images are used:
 
 - `ruby:${RUBY_VERSION}-slim`
-- `ubuntu:20.04`
 - `ubuntu:22.04`
+- `ubuntu:24.04`
 
 The following platforms are built:
 
@@ -31,10 +31,15 @@ Container images are available but no longer maintained for the following versio
 - `3.0.6`
 - `3.1.2`
 - `3.1.3`
+- `3.1.4`
 - `3.2.0`
 - `3.2.1`
 - `3.2.2`
+- `3.2.3`
 
+and the following platforms:
+
+- `ubuntu-20.04`
 
 ## Support for newer Ruby versions
 
@@ -69,7 +74,7 @@ $ docker run ghcr.io/moritzheiber/ruby-version-checker
 ```
 
 
-If you wish to pass additional compile-time options you can use the build argument `ADDITIONAL_FLAGS` (e.g. to enable YJIT support for Ruby `3.2.x`):
+If you wish to pass additional compile-time options you can use the build argument `ADDITIONAL_FLAGS` (e.g. to enable YJIT support for Ruby >= `3.2.x`):
 
 ```console
 $ docker build \
@@ -87,7 +92,7 @@ $ docker build \
   --build-arg IMAGE_NAME=ubuntu:22.04 \
   -t ruby-jemalloc:3.1.4-ubuntu-22.04 .
 ```
-_Note: Ruby `3.3.0-slim` is the default when building the Docker image without any build arguments._
+_Note: Ruby `3.3.1-slim` is the default when building the Docker image without any build arguments._
 
 ## Tests
 
@@ -100,7 +105,7 @@ dgoss run -ti ruby-jemalloc
 You can specify the Ruby version to test for by passing `RUBY_VERSION` as a variable:
 
 ```console
-dgoss run -ti -e RUBY_VERSION=3.3.0 ruby-jemalloc
+dgoss run -ti -e RUBY_VERSION=3.3.1 ruby-jemalloc
 ```
 
-_Note: `3.3.0` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
+_Note: `3.3.1` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._

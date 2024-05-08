@@ -2,13 +2,13 @@
 
 A Docker image for Ruby, built with [`jemalloc`](https://scalingo.com/blog/improve-ruby-application-memory-jemalloc).
 
-The images are based on [the official Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "20.04"/"22.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
+The images are based on [the official Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "22.04"/"24.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
 
 The following images are used:
 
 - `ruby:${RUBY_VERSION}-slim`
-- `ubuntu:20.04`
 - `ubuntu:22.04`
+- `ubuntu:24.04`
 
 The following platforms are built:
 
@@ -29,6 +29,10 @@ Container images are available but no longer maintained for the following versio
 {% for item in old %}
 - `{% item %}`
 {% end %}
+
+and following platforms:
+
+- `ubuntu-20.04`
 
 ## Support for newer Ruby versions
 
