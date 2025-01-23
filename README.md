@@ -92,7 +92,7 @@ $ docker build \
   --build-arg IMAGE_NAME=ubuntu:22.04 \
   -t ruby-jemalloc:3.1.4-ubuntu-22.04 .
 ```
-_Note: Ruby `3.3.1-slim` is the default when building the Docker image without any build arguments._
+_Note: Ruby `3.4.1-slim` is the default when building the Docker image without any build arguments._
 
 ## Tests
 
@@ -105,7 +105,7 @@ dgoss run -ti ruby-jemalloc
 You can specify the Ruby version to test for by passing `RUBY_VERSION` as a variable:
 
 ```console
-dgoss run -ti -e RUBY_VERSION=3.3.1 ruby-jemalloc
+dgoss run -ti -e RUBY_VERSION=3.4.1 ruby-jemalloc
 ```
 
-_Note: `3.3.1` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
+_Note: `3.4.1` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
