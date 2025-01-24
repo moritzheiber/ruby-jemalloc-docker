@@ -1,4 +1,5 @@
 name: Build-Test-Push
+
 on:
   schedule:
     - cron: "5 4 * * 3"
@@ -13,7 +14,7 @@ on:
 
 jobs:
   gather-versions:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       versions: ${{ steps.ruby-versions.outputs.versions }}
       metadata: ${{ steps.ruby-versions.outputs.metadata }}
@@ -21,14 +22,16 @@ jobs:
       - uses: moritzheiber/ruby-versions-action@v1
         name: Fetch latest Ruby versions
         id: ruby-versions
+
   build-test-push:
-    runs-on: ubuntu-22.04
     needs: ["gather-versions"]
     strategy:
       matrix:
         version: ${{ fromJSON(needs.gather-versions.outputs.versions) }}
-        image: ["slim", "ubuntu-22.04", "ubuntu-24.04"]
+        image: [slim, ubuntu-22.04, ubuntu-24.04]
+        platform: [amd64, arm64]
         include: ${{ fromJSON(needs.gather-versions.outputs.metadata) }}
+    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     steps:
       - name: Set image_name
         id: context
@@ -36,9 +39,9 @@ jobs:
           if [[ "${{ matrix.image }}" == "slim" ]] ; then
             echo "image_name=ruby:${{ matrix.version }}-slim" >> ${GITHUB_OUTPUT}
           elif [[ "${{ matrix.image }}" == "ubuntu-22.04" ]] ; then
-            echo "image_name=ubuntu:20.04" >> ${GITHUB_OUTPUT}
-          elif [[ "${{ matrix.image }}" == "ubuntu-24.04" ]] ; then
             echo "image_name=ubuntu:22.04" >> ${GITHUB_OUTPUT}
+          elif [[ "${{ matrix.image }}" == "ubuntu-24.04" ]] ; then
+            echo "image_name=ubuntu:24.04" >> ${GITHUB_OUTPUT}
           fi
 
           if [[ "${{ startsWith(matrix.version, '3.2') }}" == "true" ]] ; then
@@ -51,21 +54,67 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
         with:
           driver-opts: |
-            image=moby/buildkit:v0.10.6
+            image=moby/buildkit:v0.19.0
       - uses: docker/build-push-action@v6
         name: Build
+        id: build
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.platform }}
           push: ${{ github.ref == 'refs/heads/main' }}
           cache-from: type=gha
-          cache-to: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             RUBY_VERSION=${{ matrix.version }}
             RUBY_CHECKSUM=${{ matrix.checksum }}
             IMAGE_NAME=${{ steps.context.outputs.image_name }}
             ADDITIONAL_FLAGS=${{ steps.context.outputs.flags }}
-          tags: "ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.version }}-${{ matrix.image }}"
+          provenance: false
+          outputs: |
+            type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,push=${{ github.ref == 'refs/heads/main' }}
+      - name: Export digest
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${{ matrix.version }}-${{ matrix.image }}/${digest#sha256:}"
+      - name: Upload digest
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v3
+        with:
+          name: digests-${{ matrix.version }}-${{ matrix.image }}
+          path: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge-manifests:
+    needs: ["build-test-push", "gather-versions"]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        version: ${{ fromJSON(needs.gather-versions.outputs.versions) }}
+        image: [slim, ubuntu-22.04, ubuntu-24.04]
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:v0.19.0
+      - name: Download digests
+        uses: actions/download-artifact@v3
+        with:
+          name: digests-${{ matrix.version }}-${{ matrix.image }}
+          path: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
+      - name: Create and push manifest
+        working-directory: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
+        run: |
+          docker buildx imagetools create -t ghcr.io/${{ github.repository }}:${{ matrix.version }}-${{ matrix.image }} \
+            $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
