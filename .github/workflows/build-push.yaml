@@ -73,7 +73,7 @@ jobs:
             ADDITIONAL_FLAGS=${{ steps.context.outputs.flags }}
           provenance: false
           outputs: |
-            type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,push=${{ github.ref == 'refs/heads/main' }}
+            type=image,name=ghcr.io/moritzheiber/ruby-jemalloc,push-by-digest=true,push=${{ github.ref == 'refs/heads/main' }}
       - name: Export digest
         if: github.ref == 'refs/heads/main'
         run: |
@@ -116,5 +116,5 @@ jobs:
       - name: Create and push manifest
         working-directory: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
         run: |
-          docker buildx imagetools create -t ghcr.io/${{ github.repository }}:${{ matrix.version }}-${{ matrix.image }} \
-            $(printf 'ghcr.io/${{ github.repository }}@sha256:%s ' *)
+          docker buildx imagetools create -t ghcr.io/moritzheiber/ruby-jemalloc:${{ matrix.version }}-${{ matrix.image }} \
+            $(printf 'ghcr.io/moritzheiber/ruby-jemalloc@sha256:%s ' *)
