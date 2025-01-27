@@ -109,7 +109,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:v0.19.0
       - name: Download digests
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: digests-${{ matrix.version }}-${{ matrix.image }}
           path: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
