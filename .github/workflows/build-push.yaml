@@ -105,8 +105,8 @@ jobs:
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
-          name: digests-${{ matrix.version }}-${{ matrix.image }}
-          pattern: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}-*
+          path: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
+          pattern: digests-${{ matrix.version }}-${{ matrix.image }}-*
       - name: Create and push manifest
         working-directory: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
         run: |
