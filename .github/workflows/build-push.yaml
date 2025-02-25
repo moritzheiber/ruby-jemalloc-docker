@@ -87,7 +87,7 @@ jobs:
           retention-days: 1
 
   merge-manifests:
-    needs: ["build-test-push"]
+    needs: ["build-test-push", "gather-versions"]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     strategy:
