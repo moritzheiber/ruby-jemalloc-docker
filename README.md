@@ -2,13 +2,14 @@
 
 A Docker image for Ruby, built with [`jemalloc`](https://scalingo.com/blog/improve-ruby-application-memory-jemalloc).
 
-The images are based on [the offical Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "22.04"/"24.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
+The images are based on [the official Ruby "slim"](https://hub.docker.com/_/ruby) and [official Ubuntu "22.04"/"24.04"/"26.04" (LTS) images](https://hub.docker.com/_/ubuntu) on Docker Hub.
 
 The following images are used:
 
 - `ruby:${RUBY_VERSION}-slim`
 - `ubuntu:22.04`
 - `ubuntu:24.04`
+- `ubuntu:26.04`
 
 The following platforms are built:
 
@@ -18,24 +19,29 @@ The following platforms are built:
 
 The following Ruby versions are built:
 
-- `3.1.4`
-- `3.2.3`
-- `3.3.0`
+- `3.2.11`
+- `3.3.11`
+- `3.4.10`
+- `4.0.5`
 
 Images for Ruby >= 3.2.x are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
 
 Container images are available but no longer maintained for the following versions:
 
-- `3.0.4`
-- `3.0.5`
-- `3.0.6`
-- `3.1.2`
-- `3.1.3`
-- `3.1.4`
-- `3.2.0`
-- `3.2.1`
-- `3.2.2`
-- `3.2.3`
+- `3.2.4`
+- `3.2.5`
+- `3.2.6`
+- `3.2.7`
+- `3.2.8`
+- `3.3.4`
+- `3.3.5`
+- `3.3.6`
+- `3.3.7`
+- `3.3.8`
+- `3.4.1`
+- `3.4.2`
+- `3.4.3`
+- `3.4.4`
 
 and the following platforms:
 
@@ -47,7 +53,7 @@ GitHub Actions is set up to gather the latest available Ruby versions with the [
 
 ## Compiling your own image
 
-The `Dockerfile` is set up in a way which makes it possible to compile pretty much any recent Ruby release [from the index on the ruby-lang.org website](https://cache.ruby-lang.org/pub/ruby/index.txt). The only two build arguments you need to provide are `RUBY_VERSION` (e.g. `3.1.2`) and the associated `sha256` checksum as `RUBY_CHECKSUM` (e.g. `ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a`) of the `tar.gz` package associated with the relevant version.
+The `Dockerfile` is set up in a way which makes it possible to compile pretty much any recent Ruby release [from the index on the ruby-lang.org website](https://cache.ruby-lang.org/pub/ruby/index.txt). The only two build arguments you need to provide are `RUBY_VERSION` (e.g. `4.0.5`) and the associated `sha256` checksum as `RUBY_CHECKSUM` (e.g. `7d6149079a63f8ae1d326c9fa65c6019ba2dc3155eae7b39159817911c88958e`) of the `tar.gz` package associated with the relevant version.
 
 You can always use the [ruby-version-checker](https://github.com/moritzheiber/ruby-version-checker-rs) container to fetch the latest available Ruby releases and their corresponding checksums:
 
@@ -56,19 +62,24 @@ $ docker run ghcr.io/moritzheiber/ruby-version-checker
 # [...]
 [
   {
-    "name": "3.0.6",
-    "url": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.6.tar.gz",
-    "sha256": "6e6cbd490030d7910c0ff20edefab4294dfcd1046f0f8f47f78b597987ac683e"
+    "name": "3.2.11",
+    "url": "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.11.tar.gz",
+    "sha256": "b3eeabd6636f334531db3ffdc3229eb05e524740e6c84fdc043720573cf2f8b2"
   },
   {
-    "name": "3.1.4",
-    "url": "https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.4.tar.gz",
-    "sha256": "a3d55879a0dfab1d7141fdf10d22a07dbf8e5cdc4415da1bde06127d5cc3c7b6"
+    "name": "3.3.11",
+    "url": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.11.tar.gz",
+    "sha256": "59f0fafb1a59a05dc3765117af3fa68e153eb48254708549f321c1e9e078d7a0"
   },
   {
-    "name": "3.2.2",
-    "url": "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz",
-    "sha256": "96c57558871a6748de5bc9f274e93f4b5aad06cd8f37befa0e8d94e7b8a423bc"
+    "name": "3.4.10",
+    "url": "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz",
+    "sha256": "ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
+  },
+  {
+    "name": "4.0.5",
+    "url": "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.5.tar.gz",
+    "sha256": "7d6149079a63f8ae1d326c9fa65c6019ba2dc3155eae7b39159817911c88958e"
   }
 ]
 ```
@@ -78,21 +89,21 @@ If you wish to pass additional compile-time options you can use the build argume
 
 ```console
 $ docker build \
-  --build-arg RUBY_VERSION="3.1.4" \
-  --build-arg RUBY_CHECKSUM="a3d55879a0dfab1d7141fdf10d22a07dbf8e5cdc4415da1bde06127d5cc3c7b6" \
+  --build-arg RUBY_VERSION="4.0.5" \
+  --build-arg RUBY_CHECKSUM="7d6149079a63f8ae1d326c9fa65c6019ba2dc3155eae7b39159817911c88958e" \
   --build-arg ADDITIONAL_FLAGS="--enable-yjit" \
-  -t ruby-jemalloc:3.1.4-slim .
+  -t ruby-jemalloc:4.0.5-slim .
 ```
 The `Dockerfile` uses [the official Ruby `slim` image](https://hub.docker.com/_/ruby) by default, but you can also use your own base image by passing the build argument `IMAGE_NAME`:
 
 ```console
 $ docker build \
-  --build-arg RUBY_VERSION=3.1.4 \
-  --build-arg RUBY_CHECKSUM=a3d55879a0dfab1d7141fdf10d22a07dbf8e5cdc4415da1bde06127d5cc3c7b6 \
+  --build-arg RUBY_VERSION=4.0.5 \
+  --build-arg RUBY_CHECKSUM=7d6149079a63f8ae1d326c9fa65c6019ba2dc3155eae7b39159817911c88958e \
   --build-arg IMAGE_NAME=ubuntu:22.04 \
-  -t ruby-jemalloc:3.1.4-ubuntu-22.04 .
+  -t ruby-jemalloc:4.0.5-ubuntu-22.04 .
 ```
-_Note: Ruby `3.4.1-slim` is the default when building the Docker image without any build arguments._
+_Note: Ruby `4.0.5-slim` is the default when building the Docker image without any build arguments._
 
 ## Tests
 
@@ -105,7 +116,7 @@ dgoss run -ti ruby-jemalloc
 You can specify the Ruby version to test for by passing `RUBY_VERSION` as a variable:
 
 ```console
-dgoss run -ti -e RUBY_VERSION=3.4.1 ruby-jemalloc
+dgoss run -ti -e RUBY_VERSION=4.0.5 ruby-jemalloc
 ```
 
-_Note: `3.4.1` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
+_Note: `4.0.5` is the default. And don't forget to also pass the correct `RUBY_CHECKSUM`._
