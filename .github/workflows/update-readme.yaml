@@ -1,27 +1,53 @@
 name: Update README
+
 on:
-  push:
+  workflow_run:
+    workflows: ["Build-Test-Push"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  get-container-versions:
-    runs-on: ubuntu-22.04
-    outputs:
-      current: ${{ steps.fetch-image-versions.outputs.current }}
-      old: ${{ steps.fetch-image-versions.outputs.old }}
+  gather-versions:
+    uses: ./.github/workflows/container-versions.yaml
+
+  update-readme:
+    needs: gather-versions
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: read
     steps:
-      - name: Fetch latest container images
-        id: fetch-image-versions
+      - uses: actions/checkout@v7
+      - name: Regenerate README from template
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { run } = require('${{ github.workspace }}/.github/scripts/readme-lists.js');
+            await run({
+              github,
+              context,
+              core,
+              current: ${{ needs.gather-versions.outputs.current }},
+              available: ${{ needs.gather-versions.outputs.versions }},
+              metadata: ${{ needs.gather-versions.outputs.metadata }},
+            });
+      - name: Commit and push changes
         run: |
-          token=$(curl -sL https://ghcr.io/token?scope=repository:moritzheiber/ruby-jemalloc:pull | jq -Mcj .token)
-          versions=$(curl -sL --header "Authorization: Bearer ${token}" https://ghcr.io/v2/moritzheiber/ruby-jemalloc/tags/list)
-          versions_thirty=$(echo ${versions} | jq -Mcj '.tags | map(scan("3\\.0\\.\\d*")) | unique | sort')
-          versions_thirtyone=$(echo ${versions} | jq -Mcj '.tags | map(scan("3\\.1\\.\\d*")) | unique | sort')
-          versions_thirtytwo=$(echo ${versions} | jq -Mcj '.tags | map(scan("3\\.2\\.\\d*")) | unique | sort')
-          current_thirty=$(echo ${versions_thirty} | jq -Mcj '.[-1:]')
-          current_thirtyone=$(echo ${versions_thirtyone} | jq -Mcj '.[-1:]')
-          current_thirtytwo=$(echo ${versions_thirtytwo} | jq -Mcj '.[-1:]')
-          old_thirty=$(echo ${versions_thirty} | jq -Mcj '.[:-1]')
-          old_thirtyone=$(echo ${versions_thirtyone} | jq -Mcj '.[:-1]')
-          old_thirtytwo=$(echo ${versions_thirtytwo} | jq -Mcj '.[:-1]')
-          echo "current=$(echo [${current_thirty},${current_thirtyone},${current_thirtytwo}] | jq -Mcj '. | flatten | sort')" >> $GITHUB_OUTPUT
-          echo "old=$(echo [${old_thirty},${old_thirtyone},${old_thirtytwo}] | jq -Mcj '. | flatten | sort')" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          if git diff --quiet -- README.md; then
+            echo "README.md is already up to date."
+            exit 0
+          fi
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: regenerate README with latest Ruby versions"
+          git push

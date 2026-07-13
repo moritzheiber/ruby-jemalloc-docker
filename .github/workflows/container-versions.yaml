@@ -1,0 +1,65 @@
+name: Container versions
+
+on:
+  workflow_call:
+    outputs:
+      versions:
+        description: "The last 6 available container versions per supported Ruby line as a JSON object"
+        value: ${{ jobs.gather-container-versions.outputs.versions }}
+      current:
+        description: "The latest Ruby versions per supported line as a JSON array"
+        value: ${{ jobs.gather-container-versions.outputs.current }}
+      metadata:
+        description: "The version, tarball URL and checksum for each supported line as a JSON array"
+        value: ${{ jobs.gather-container-versions.outputs.metadata }}
+  workflow_dispatch:
+
+jobs:
+  gather-container-versions:
+    runs-on: ubuntu-24.04
+    outputs:
+      versions: ${{ steps.fetch.outputs.versions }}
+      current: ${{ steps.ruby-versions.outputs.versions }}
+      metadata: ${{ steps.ruby-versions.outputs.metadata }}
+    steps:
+      - uses: moritzheiber/ruby-versions-action@v2
+        name: Fetch latest Ruby versions
+        id: ruby-versions
+      - uses: moritzheiber/ruby-versions-action@v2
+        name: Fetch available container versions
+        id: available
+        with:
+          repository: ghcr.io/moritzheiber/ruby-jemalloc
+          suffixes: slim,ubuntu-22.04,ubuntu-24.04,ubuntu-26.04
+      - name: Reduce to last 6 versions per line
+        id: fetch
+        env:
+          SUPPORTED: ${{ steps.ruby-versions.outputs.versions }}
+          AVAILABLE: ${{ steps.available.outputs.versions }}
+        run: |
+          set -euo pipefail
+
+          minors=$(printf '%s' "${SUPPORTED}" | jq -Mcr '[.[] | capture("^(?<m>[0-9]+\\.[0-9]+)").m] | unique')
+          bases=$(printf '%s' "${AVAILABLE}" | jq -Mc '[.[] | scan("^[0-9]+\\.[0-9]+\\.[0-9]+")] | unique')
+
+          versions="{}"
+          for minor in $(printf '%s' "${minors}" | jq -Mr '.[]'); do
+            last_six=$(printf '%s' "${bases}" | jq -Mc \
+              --arg prefix "${minor}." '
+                map(select(startswith($prefix)))
+                | sort_by(split(".") | map(tonumber))
+                | .[-6:]')
+            versions=$(printf '%s' "${versions}" | jq -Mc \
+              --arg minor "${minor}" \
+              --argjson six "${last_six}" '. + {($minor): $six}')
+          done
+
+          echo "versions=${versions}" >> "${GITHUB_OUTPUT}"
+
+          {
+            echo "### Last 6 available container versions per line"
+            echo ""
+            echo '```json'
+            printf '%s' "${versions}" | jq .
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"

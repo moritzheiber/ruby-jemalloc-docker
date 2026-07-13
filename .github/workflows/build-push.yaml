@@ -19,7 +19,7 @@ jobs:
       versions: ${{ steps.ruby-versions.outputs.versions }}
       metadata: ${{ steps.ruby-versions.outputs.metadata }}
     steps:
-      - uses: moritzheiber/ruby-versions-action@v1
+      - uses: moritzheiber/ruby-versions-action@v2
         name: Fetch latest Ruby versions
         id: ruby-versions
 
@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         version: ${{ fromJSON(needs.gather-versions.outputs.versions) }}
-        image: [slim, ubuntu-22.04, ubuntu-24.04]
+        image: [slim, ubuntu-22.04, ubuntu-24.04, ubuntu-26.04]
         platform: [amd64, arm64]
         include: ${{ fromJSON(needs.gather-versions.outputs.metadata) }}
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
@@ -42,20 +42,42 @@ jobs:
             echo "image_name=ubuntu:22.04" >> ${GITHUB_OUTPUT}
           elif [[ "${{ matrix.image }}" == "ubuntu-24.04" ]] ; then
             echo "image_name=ubuntu:24.04" >> ${GITHUB_OUTPUT}
+          elif [[ "${{ matrix.image }}" == "ubuntu-26.04" ]] ; then
+            echo "image_name=ubuntu:26.04" >> ${GITHUB_OUTPUT}
           fi
 
-          if [[ "${{ startsWith(matrix.version, '3.2') }}" == "true" ]] ; then
+          if [[ "$(printf '3.2.0\n%s\n' "${{ matrix.version }}" | sort -V | head -n1)" == "3.2.0" ]] ; then
             echo "flags=--enable-yjit" >> ${GITHUB_OUTPUT}
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
+      - uses: docker/setup-buildx-action@v4
+      - name: Build image for verification
+        uses: docker/build-push-action@v7
+        with:
+          platforms: linux/${{ matrix.platform }}
+          load: true
+          tags: ruby-jemalloc:${{ matrix.version }}-${{ matrix.image }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            RUBY_VERSION=${{ matrix.version }}
+            RUBY_CHECKSUM=${{ matrix.checksum }}
+            IMAGE_NAME=${{ steps.context.outputs.image_name }}
+            ADDITIONAL_FLAGS=${{ steps.context.outputs.flags }}
+          provenance: false
+      - name: Install goss
+        uses: e1himself/goss-installation-action@v1.3.0
+      - name: Verify image with goss
+        run: |
+          dgoss run -e RUBY_VERSION=${{ matrix.version }} \
+            ruby-jemalloc:${{ matrix.version }}-${{ matrix.image }} sleep infinity
+      - uses: docker/build-push-action@v7
         name: Build
         id: build
         with:
@@ -79,7 +101,7 @@ jobs:
           touch "/tmp/digests/${{ matrix.version }}-${{ matrix.image }}-${{ matrix.platform }}/${digest#sha256:}"
       - name: Upload digest
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.version }}-${{ matrix.image }}-${{ matrix.platform }}
           path: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}-${{ matrix.platform }}/*
@@ -93,17 +115,17 @@ jobs:
     strategy:
       matrix:
         version: ${{ fromJSON(needs.gather-versions.outputs.versions) }}
-        image: [slim, ubuntu-22.04, ubuntu-24.04]
+        image: [slim, ubuntu-22.04, ubuntu-24.04, ubuntu-26.04]
     steps:
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: /tmp/digests/${{ matrix.version }}-${{ matrix.image }}
           pattern: digests-${{ matrix.version }}-${{ matrix.image }}-*
