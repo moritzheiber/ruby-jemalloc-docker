@@ -20,7 +20,7 @@ The following platforms are built:
 The following Ruby versions are built:
 
 - `3.2.11`
-- `3.3.11`
+- `3.3.12`
 - `3.4.10`
 - `4.0.6`
 
@@ -38,6 +38,7 @@ Container images are available but no longer maintained for the following versio
 - `3.3.6`
 - `3.3.7`
 - `3.3.8`
+- `3.3.11`
 - `3.4.1`
 - `3.4.2`
 - `3.4.3`
@@ -68,9 +69,9 @@ $ docker run ghcr.io/moritzheiber/ruby-version-checker
     "sha256": "b3eeabd6636f334531db3ffdc3229eb05e524740e6c84fdc043720573cf2f8b2"
   },
   {
-    "name": "3.3.11",
-    "url": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.11.tar.gz",
-    "sha256": "59f0fafb1a59a05dc3765117af3fa68e153eb48254708549f321c1e9e078d7a0"
+    "name": "3.3.12",
+    "url": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.12.tar.gz",
+    "sha256": "b06d63beae271933033e27f0a389bc582a009e7845357d44365c39de525a051b"
   },
   {
     "name": "3.4.10",
