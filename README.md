@@ -21,7 +21,7 @@ The following Ruby versions are built:
 
 - `3.2.11`
 - `3.3.12`
-- `3.4.10`
+- `3.4.11`
 - `4.0.7`
 
 Images for Ruby >= 3.2.x are compiled with [YJIT](https://github.com/ruby/ruby/blob/master/doc/yjit/yjit.md) support.
@@ -43,6 +43,7 @@ Container images are available but no longer maintained for the following versio
 - `3.4.2`
 - `3.4.3`
 - `3.4.4`
+- `3.4.10`
 - `4.0.5`
 
 and the following platforms:
@@ -74,9 +75,9 @@ $ docker run ghcr.io/moritzheiber/ruby-version-checker
     "sha256": "b06d63beae271933033e27f0a389bc582a009e7845357d44365c39de525a051b"
   },
   {
-    "name": "3.4.10",
-    "url": "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.10.tar.gz",
-    "sha256": "ecee2d072a14f2d14347dd56dfd8fe5c3130abf5117bfaacbda0f4ef9cc429ec"
+    "name": "3.4.11",
+    "url": "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.11.tar.gz",
+    "sha256": "5c22be44524312b3d433d68739bcc530633b1da5ef8ba0afa0a37680da17d3de"
   },
   {
     "name": "4.0.7",
